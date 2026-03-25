@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
@@ -19,9 +20,17 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'num_partner',    
+        'nickname',
         'name',
-        'email',
         'password',
+        'type',
+        'registration_date',
+        'withdrawal_date',
+        'email',
+        'telephone',
+        'age',
+        'language'
     ];
 
     /**
