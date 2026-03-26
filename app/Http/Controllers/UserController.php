@@ -5,9 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function login(Request $request): JsonResponse
+    {
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $token = $user->createToken('api-token')->accessToken;
+
+        return response()->json([
+            'token' => $token,
+        ]);
+    }
+
     public function index(): JsonResponse
     {
         $users = User::all();
