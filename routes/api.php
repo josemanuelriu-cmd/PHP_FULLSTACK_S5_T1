@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardgameController;
+use App\Http\Controllers\TypeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,4 +23,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/v1/boardgames', [BoardgameController::class, 'store']); //creo uno
     Route::put('/v1/boardgames/{id}', [BoardgameController::class, 'update']); //actualizo uno en concreto
     Route::delete('/v1/boardgames/{id}', [BoardgameController::class, 'destroy']); //borro uno en concreto
+    //Types
+    Route::get('/v1/types', [TypeController::class, 'index']); //cojo todos
+    Route::get('/v1/types/{id}', [TypeController::class, 'detail']); //cojo uno en concreto
+    Route::post('/v1/types', [TypeController::class, 'store']); //creo uno
+    Route::put('/v1/types/{id}', [TypeController::class, 'update']); //actualizo uno en concreto
+    Route::delete('/v1/types/{id}', [TypeController::class, 'destroy']); //borro uno en concreto
 });

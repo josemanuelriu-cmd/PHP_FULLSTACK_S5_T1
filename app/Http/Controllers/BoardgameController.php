@@ -49,7 +49,7 @@ class BoardgameController extends Controller
             return response()->json(['message' => 'Not Found'], 404);
         }
 
-        $boardgames->destroy();
+        $boardgames->delete();
 
         return response()->json([
             'message' => 'Boardgame deleted',
