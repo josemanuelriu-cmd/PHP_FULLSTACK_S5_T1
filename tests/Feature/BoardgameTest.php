@@ -90,11 +90,28 @@ class BoardgameTest extends TestCase
             'message' => 'Boardgame deleted',
         ]);
     }
-    /*
+    
     public function test_update_boardgame(): void
     {
-        
-    }*/
+        $user = User::factory()->create();
+        Passport::actingAs($user);
 
-    
+        $data = [
+            'name' => 'Pruebas Update',
+            'slug' => 'pruebas-update',
+            'min_players' => 4,
+            'max_players' => 6,
+            'min_age' => 12,
+            'duration' => 120,
+            'description' => 'descripcion prueba update',
+        ];
+        $response = $this->put('/api/v1/boardgames/2', $data);
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'name' => 'Pruebas Update',
+        ]);
+        $this->assertDatabaseHas('boardgames', [
+            'slug' => 'pruebas-update',
+        ]);    
+    }    
 }
