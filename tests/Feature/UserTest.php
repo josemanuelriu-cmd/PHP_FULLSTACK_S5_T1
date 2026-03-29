@@ -14,16 +14,11 @@ class UserTest extends TestCase
 
     public function test_get_users_authenticated(): void
     {
-dd(app()->environment());        
         $user = User::factory()->create();
-
         Passport::actingAs($user);
-
         $response = $this->getJson('/api/v1/users');
-
         $response->assertStatus(200);
-    }
-    
+    }    
     public function test_basic_default_page()
     {
         $response = $this->get('/');
@@ -33,7 +28,6 @@ dd(app()->environment());
     {
         $user = User::factory()->create();
         Passport::actingAs($user);
-
         $response = $this->get('/api/v1/users');
         $response->assertStatus(200);
         //$response->assertJsonCount(2);
@@ -44,7 +38,6 @@ dd(app()->environment());
     {
         $user = User::factory()->create();
         Passport::actingAs($user);
-
         $response = $this->get('/api/v1/users/1');
         $response->assertStatus(200);
         $response->assertJsonStructure(['id', 'num_partner', 'nickname', 'name', 'type', 'registration_date', 'withdrawal_date', 'email', 'telephone', 'age', 'language', 'email_verified_at', 'created_at', 'updated_at']);
@@ -54,15 +47,12 @@ dd(app()->environment());
     {
         $user = User::factory()->create();
         Passport::actingAs($user);
-
         $response = $this->get('/api/v1/users/999');
         $response->assertStatus(404);
-
         $response->assertJson([
             'message' => 'Not Found',
         ]);
     }
-
     public function test_create_user(): void
     {
         $user = User::factory()->create();
@@ -80,7 +70,6 @@ dd(app()->environment());
             'age' => 25,
             'language' => 'es',
         ];
-
         $response = $this->post('/api/v1/users', $data);
         $response->assertStatus(201);
         $response->assertJsonFragment([
@@ -91,7 +80,6 @@ dd(app()->environment());
             'email' => 'pruebas@zas.es',
         ]);
     }
-
     public function test_soft_delete_user(): void
     {
         $user = User::factory()->create();
@@ -102,13 +90,11 @@ dd(app()->environment());
         $response->assertJson([
             'message' => 'User deleted',
         ]);
-
         $this->assertDatabaseHas('users', [
             'id' => 3,
             'withdrawal_date' => now()->toDateString(), // o not null
         ]);
     }
-
     public function test_update_user(): void
     {
         // Primero creamos un usuario en BBDD
@@ -124,7 +110,6 @@ dd(app()->environment());
             'age' => 25,
             'language' => 'es',
         ]);
-
         $data = [
             'name' => 'PruebasTest2 actualizado',
             'type' => 'partner',
@@ -138,12 +123,10 @@ dd(app()->environment());
         $response = $this->putJson("/api/v1/users/{$user->id}", $data);
 
         $response->assertStatus(200);
-
         $response->assertJsonFragment([
             'name' => 'PruebasTest2 actualizado',
             'type' => 'partner',
         ]);
-
         // Verificar en BBDD
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
@@ -151,5 +134,4 @@ dd(app()->environment());
             'type' => 'partner',
         ]);
     }
-        
 }
