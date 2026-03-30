@@ -6,6 +6,7 @@ use App\Models\Type;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+//use Tests\Feature\ZasssessionTest;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,7 +20,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             BoardgameSeeder::class,
-            TypeSeeder::class
+            TypeSeeder::class,
+            ZassessionSeeder::class,
+            user_zassessionSeeder::class,
         ]);
     }
 }

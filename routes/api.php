@@ -5,28 +5,72 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardgameController;
 use App\Http\Controllers\TypeController;
+use App\Http\Controllers\ZassessionController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::middleware('auth:api')->group(function () {
+    //Login
+    Route::post('/v1/register', [UserController::class, 'register']);
+    Route::post('/v1/login', [UserController::class, 'login']);
+    Route::post('/v1/logout', [UserController::class, 'logout']);
     //Users
-    Route::get('/v1/users', [UserController::class, 'index']); //cojo todos
-    Route::get('/v1/users/{id}', [UserController::class, 'detail']); //cojo uno en concreto
-    Route::post('/v1/users', [UserController::class, 'store']); //creo uno
-    Route::put('/v1/users/{id}', [UserController::class, 'update']); //actualizo uno en concreto
-    Route::delete('/v1/users/{id}', [UserController::class, 'destroy']); //borro (sin destruir) uno en concreto
+    Route::prefix('v1/types')->group(function () {
+        Route::get('', [UserController::class, 'index']); //cojo todos
+        Route::get('/{id}', [UserController::class, 'detail'])->where('id', '[0-9]+'); //cojo uno en concreto
+        Route::post('', [UserController::class, 'store']); //creo uno
+        Route::put('/{id}', [UserController::class, 'update'])->where('id', '[0-9]+'); //actualizo uno en concreto
+        Route::delete('/{id}', [UserController::class, 'destroy'])->where('id', '[0-9]+'); //borro (sin destruir) uno en concreto
+    });
     //Boardgames
-    Route::get('/v1/boardgames', [BoardgameController::class, 'index']); //cojo todos
-    Route::get('/v1/boardgames/{id}', [BoardgameController::class, 'detail']); //cojo uno en concreto
-    Route::post('/v1/boardgames', [BoardgameController::class, 'store']); //creo uno
-    Route::put('/v1/boardgames/{id}', [BoardgameController::class, 'update']); //actualizo uno en concreto
-    Route::delete('/v1/boardgames/{id}', [BoardgameController::class, 'destroy']); //borro uno en concreto
+    Route::prefix('v1/types')->group(function () {
+        Route::get('', [BoardgameController::class, 'index']); //cojo todos
+        Route::get('/{id}', [BoardgameController::class, 'detail'])->where('id', '[0-9]+'); //cojo uno en concreto
+        Route::post('', [BoardgameController::class, 'store']); //creo uno
+        Route::put('/{id}', [BoardgameController::class, 'update'])->where('id', '[0-9]+'); //actualizo uno en concreto
+        Route::delete('/{id}', [BoardgameController::class, 'destroy'])->where('id', '[0-9]+'); //borro uno en concreto
+    });
     //Types
-    Route::get('/v1/types', [TypeController::class, 'index']); //cojo todos
-    Route::get('/v1/types/{id}', [TypeController::class, 'detail']); //cojo uno en concreto
-    Route::post('/v1/types', [TypeController::class, 'store']); //creo uno
-    Route::put('/v1/types/{id}', [TypeController::class, 'update']); //actualizo uno en concreto
-    Route::delete('/v1/types/{id}', [TypeController::class, 'destroy']); //borro uno en concreto
+    Route::prefix('v1/types')->group(function () {
+        Route::get('', [TypeController::class, 'index']); //cojo todos
+        Route::get('/{id}', [TypeController::class, 'detail'])->where('id', '[0-9]+'); //cojo uno en concreto
+        Route::post('', [TypeController::class, 'store']); //creo uno
+        Route::put('/{id}', [TypeController::class, 'update'])->where('id', '[0-9]+'); //actualizo uno en concreto
+        Route::delete('/{id}', [TypeController::class, 'destroy'])->where('id', '[0-9]+'); //borro uno en concreto
+    });
+    //Zassessions
+    Route::prefix('v1/zassessions')->group(function () {
+        Route::get('', [ZassessionController::class, 'index']); //cojo todas las sesiones
+        Route::get('/{id}', [ZassessionController::class, 'detail'])->where('id', '[0-9]+'); //cojo una sesion en concreto
+        Route::post('', [ZassessionController::class, 'store']); //creo una sesion
+        Route::put('/{id}', [ZassessionController::class, 'update'])->where('id', '[0-9]+'); //actualizo una sesion en concreto
+        Route::delete('/{id}', [ZassessionController::class, 'destroy'])->where('id', '[0-9]+'); //borro una sesion en concreto
+        Route::post('/{id}/join', [ZassessionController::class, 'join'])->where('id', '[0-9]+'); //un usuario se une a una session
+        Route::delete('/{id}/leave', [ZassessionController::class, 'leave'])->where('id', '[0-9]+'); //un usuario se va de una session
+        Route::get('/{id}/users', [ZassessionController::class, 'get_users'])->where('id', '[0-9]+'); //cojo los usuarios de una session
+        Route::get('/stats', [ZassessionController::class, 'allstats']); //estadísticas de las zassessions
+        Route::get('/{id}/stats', [ZassessionController::class, 'sessionStats'])->where('id', '[0-9]+'); //estadísticas de una zassession concretamente    
+
+        //necesita games
+        /*
+        Route::get('/{id}/games', [GameController::class, 'indexSession'])->where('id', '[0-9]+'); //cojo todos los de una zassession
+        Route::post('/{id}/games', [GameController::class, 'store'])->where('id', '[0-9]+'); //creo una partida en una zassession
+        Route::put('/{id}/games/{id_game}', [GameController::class, 'update'])->where('id', '[0-9]+'); //actualizo una partida en concreto
+        */
+    });
+
+    //Games
+    /*
+    Route::prefix('v1/games')->group(function () {
+        Route::get('', [GameController::class, 'indexAll']); //cojo todos        
+        Route::get('/{id}', [GameController::class, 'detail'])->where('id', '[0-9]+'); //cojo una partida en concreto
+        Route::delete('/{id}', [GameController::class, 'destroy'])->where('id', '[0-9]+'); //borro una partida en concreto
+        Route::post('/{id}/join/{user_id}', [GameController::class, 'join'])->where('id', '[0-9]+'); //un usuario se une a una partida
+        Route::delete('/{id}/leave/{user_id}', [GameController::class, 'leave'])->where('id', '[0-9]+'); //un usuario se va de una partida
+        Route::get('/{id}/users', [GameController::class, 'users']); //cojo los usuarios de una partida
+        Route::get('/stats', [GameController::class, 'stats']); //estadísticas de las partidas
+    });
+    */
 });
