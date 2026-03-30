@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Type;
 use App\Models\User;
+use App\Models\Boardgame;
+use App\Models\Game;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,7 +21,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             BoardgameSeeder::class,
-            TypeSeeder::class
+            TypeSeeder::class,
+            GameSeeder::class
         ]);
     }
 }
