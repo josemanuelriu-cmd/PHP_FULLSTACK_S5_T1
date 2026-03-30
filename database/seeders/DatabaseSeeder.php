@@ -8,6 +8,7 @@ use App\Models\Boardgame;
 use App\Models\Game;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+//use Tests\Feature\ZasssessionTest;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +24,8 @@ class DatabaseSeeder extends Seeder
             BoardgameSeeder::class,
             TypeSeeder::class,
             GameSeeder::class
+            ZassessionSeeder::class,
+            user_zassessionSeeder::class,
         ]);
     }
 }

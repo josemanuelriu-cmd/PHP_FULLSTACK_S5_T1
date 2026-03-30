@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<User>
+ * @extends Factory<Type>
  */
 class TypeFactory extends Factory
 {
@@ -21,7 +21,8 @@ class TypeFactory extends Factory
     public function definition(): array
     {
         return [            
-            'name' => fake()->name(),
+            'type' => $this->faker->unique()->randomElement(['abstracto', 'ameritrash', 'cartas', 'clásico', 'colocación de trabajadores', 'construcción de mazos', 'cooperativo', 'dados', 'escape room', 'estrategia', 'eurogame', 'familiar', 'filler', 'infantil', 'investigacion', 'mayorias', 'narrativo', 'party', 'roles ocultos', 'wargame']),
+            'description' => fake()->text(),
         ];
     }
 }

@@ -56,4 +56,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function zassession()
+    {
+        return $this->belongsToMany(
+            Zassession::class, 
+            'user_zassession', 
+            'user_id', 
+            'zassession_id'
+        );
+    }
 }

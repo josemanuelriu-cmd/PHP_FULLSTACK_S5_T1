@@ -26,13 +26,14 @@ class UserFactory extends Factory
     {
         return [
             'num_partner' => fake()->unique()->numberBetween(1,10),
-            'nickname' => fake()->name(),
+            'nickname' => fake()->unique()->name(),
             'name' => fake()->name(),
             'password' => static::$password ??= Hash::make('password'),
-            'type' => 'admin',
+            //'type' => 'admin',
+            'type' => $this->faker->randomElement(['admin', 'junta', 'partner', 'guest']),
             'registration_date' => now(),
             'email' => fake()->unique()->safeEmail(),
-            'telephone' => fake()->phoneNumber(),
+            'telephone' => fake()->unique()->phoneNumber(),
             'age' => fake()->numberBetween(1,100),
             'language' => 'es',
             'email_verified_at' => now(),            
