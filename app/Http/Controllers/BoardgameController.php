@@ -76,4 +76,5 @@ class BoardgameController extends Controller
         $boardgames->update($data);
         return response()->json($boardgames, 200);
     }
+    
 }

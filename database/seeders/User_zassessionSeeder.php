@@ -18,18 +18,26 @@ class user_zassessionSeeder extends Seeder
             [
                 'user_id' => 1, 
                 'zassession_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),                
             ],
             [
                 'user_id' => 1, 
                 'zassession_id' => 2, 
+                'created_at' => now(),
+                'updated_at' => now(),                
             ],           
             [
                 'user_id' => 2, 
                 'zassession_id' => 1, 
+                'created_at' => now(),
+                'updated_at' => now(),                
             ],
             [
                 'user_id' => 2, 
                 'zassession_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),                
             ]            
         ]);
     }
