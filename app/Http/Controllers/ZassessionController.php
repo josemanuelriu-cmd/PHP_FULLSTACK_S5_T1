@@ -134,7 +134,7 @@ class ZassessionController extends Controller
             'message' => 'User left the session'
         ], 200);
     }
-    public function get_users($session_id): JsonResponse
+    public function getUsers($session_id): JsonResponse
     {
         $zassession = Zassession::find($session_id);
         if ($zassession ===null) { 

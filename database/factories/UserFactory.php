@@ -32,6 +32,7 @@ class UserFactory extends Factory
             //'type' => 'admin',
             'type' => $this->faker->randomElement(['admin', 'junta', 'partner', 'guest']),
             'registration_date' => now(),
+            'withdrawal_date' => null,
             'email' => fake()->unique()->safeEmail(),
             'telephone' => fake()->unique()->phoneNumber(),
             'age' => fake()->numberBetween(1,100),
@@ -46,8 +47,34 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn () => [
             'email_verified_at' => null,
+        ]);
+    }
+    
+    public function admin(): static
+    {
+        return $this->state(fn () => [
+            'type' => 'admin',
+        ]);
+    }
+    public function junta(): static
+    {
+        return $this->state(fn () => [
+            'type' => 'junta',
+        ]);
+    }
+    public function partner(): static
+    {
+        return $this->state(fn () => [
+            'type' => 'partner',
+        ]);
+    }
+
+    public function withPassword(string $password): static
+    {
+        return $this->state(fn () => [
+            'password' => Hash::make($password),
         ]);
     }
 }

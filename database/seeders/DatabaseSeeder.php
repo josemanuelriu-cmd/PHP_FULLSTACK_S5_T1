@@ -2,13 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Type;
-use App\Models\User;
-use App\Models\Boardgame;
-use App\Models\Game;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-//use Tests\Feature\ZasssessionTest;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,9 +18,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BoardgameSeeder::class,
             TypeSeeder::class,
-            GameSeeder::class
             ZassessionSeeder::class,
-            user_zassessionSeeder::class,
+            GameSeeder::class,
+            User_zassessionSeeder::class,
+            Game_userSeeder::class
         ]);
     }
 }

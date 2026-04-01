@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class GameController extends Controller
 {
-    public function index(): JsonResponse
+    public function indexAll(): JsonResponse
     {
         $games = Game::all();
         return response()->json($games);
@@ -20,7 +20,7 @@ class GameController extends Controller
         $games = Game::find($id);
         if ($games ===null) { 
             return response()->json([
-                'message' => 'Not Found'
+                'message' => 'Game Not Found'
             ], 404);
         }
         return response()->json($games);
@@ -32,7 +32,7 @@ class GameController extends Controller
             'boardgame_id' => 'required|integer',
             'host_user_id' => 'required|integer',
             'max_players' => 'required|integer',
-            'start_time' => 'required|string',
+            'start_time' => 'required|date_format:H:i:s',
             'status' => 'required|string',
             'necesary_know_how' => 'required|boolean',
         ]);
@@ -45,7 +45,7 @@ class GameController extends Controller
         $games = Game::find($id);
 
         if (!$games) {
-            return response()->json(['message' => 'Not Found'], 404);
+            return response()->json(['message' => 'Game Not Found'], 404);
         }
 
         $games->delete();
@@ -59,7 +59,7 @@ class GameController extends Controller
         $games = Game::find($id);
 
         if (!$games) {
-            return response()->json(['message' => 'Not Found'], 404);
+            return response()->json(['message' => 'Game Not Found'], 404);
         }
 
         $data = $request->validate([
@@ -73,5 +73,82 @@ class GameController extends Controller
         ]);
         $games->update($data);
         return response()->json($games, 200);
+    }
+    public function join($game_id): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        
+        $user = Auth::guard('api')->user();
+//dd($game_id);        
+        if (!$user) { 
+            return response()->json([
+                'message' => 'User not autenticated'
+            ], 404);
+        } 
+//dd($game_id);        
+        $game = Game::find($game_id);
+        if (!$game) { 
+            return response()->json([
+                'message' => 'Game not found'
+            ], 404);
+        }
+//dd($game_id);        
+        if ($game->players()->count() >= $game->max_players) {
+            return response()->json([
+                'message' => 'Game is full'
+            ], 401);
+        }
+//dd($game_id);        
+        if ($game->players()->where('user_id', $user->id)->exists()) {
+            return response()->json([
+                'message' => 'User already joined this game'
+            ], 402);
+        }
+//dd($game_id);        
+        $game->players()->attach($user->id);
+        return response()->json([
+            'message' => 'User joined the game'
+        ], 200);
+    }
+    public function leave($game_id): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($user ===null) { 
+            return response()->json([
+                'message' => 'User not autenticated'
+            ], 404);
+        } 
+        $game = Game::find($game_id);
+        if (!$game) { 
+            return response()->json([
+                'message' => 'Game not found'
+            ], 404);
+        }
+        
+        if (!$game->players()->where('user_id', $user->id)->exists()) {
+            return response()->json([
+                'message' => 'User is not joined to this game'
+            ], 400);
+        }
+        $game->players()->detach($user->id);
+        return response()->json([
+            'message' => 'User left the game'
+        ], 200);
+    }
+    public function getUsers($game_id): JsonResponse
+    {
+        $game = Game::find($game_id);
+        if ($game ===null) { 
+            return response()->json([
+                'message' => 'Game not found'
+            ], 404);
+        }
+         if ($game->players()->count() == 0) {
+            return response()->json([
+                'message' => 'No players joined to this game'
+            ], 400);
+        }
+        return response()->json($game->players, 200);
     }
 }

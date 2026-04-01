@@ -9,6 +9,7 @@ use Tests\TestCase;
 use App\Models\Boardgame;
 use App\Models\User;
 
+
 class BoardgameTest extends TestCase
 {
     /**
@@ -113,5 +114,6 @@ class BoardgameTest extends TestCase
         $this->assertDatabaseHas('boardgames', [
             'slug' => 'pruebas-update',
         ]);    
-    }    
+    }
+
 }

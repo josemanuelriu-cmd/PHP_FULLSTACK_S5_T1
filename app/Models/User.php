@@ -65,4 +65,15 @@ class User extends Authenticatable
             'zassession_id'
         );
     }
+
+    public function games()
+    {
+        return $this->belongsToMany(
+            Game::class,
+            'game_user',
+            'game_id',
+            'user_id'            
+        );
+    }
 }
+

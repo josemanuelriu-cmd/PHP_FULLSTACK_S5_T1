@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute as CastsAttribute;
 
 class Game extends Model
 {
-    protected $table = 'types';    
+    protected $table = 'games';    
     
     use HasFactory;
 
@@ -46,5 +46,36 @@ class Game extends Model
             'status' => 'string',
             'necesary_know_how' => 'boolean',
         ];
+    }
+    public function session()
+    {
+        return $this->belongsTo(
+            Zassession::class
+        );
+    }
+
+    public function boardgame()
+    {
+        return $this->belongsTo(
+            Boardgame::class
+        );
+    }
+
+    public function players()
+    {
+        return $this->belongsToMany(
+            User::class, 
+            'game_user', 
+            'game_id' , 
+            'user_id'
+        );
+    }
+
+    public function host()
+    {
+        return $this->belongsTo(
+            User::class,
+            'host_user_id'
+        );
     }
 }
