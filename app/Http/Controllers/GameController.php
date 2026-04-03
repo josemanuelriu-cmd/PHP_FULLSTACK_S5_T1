@@ -15,6 +15,12 @@ class GameController extends Controller
         return response()->json($games);
     }
 
+    public function indexSession($session_id): JsonResponse
+    {
+        $games = Game::where('zassession_id', $session_id)->get();
+        return response()->json($games);
+    }
+
     public function detail($id): JsonResponse
     {
         $games = Game::find($id);

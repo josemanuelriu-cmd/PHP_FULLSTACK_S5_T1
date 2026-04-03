@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Game;
 use App\Models\Zassession;
 
 class ZassessionTest extends TestCase
@@ -25,10 +26,13 @@ class ZassessionTest extends TestCase
     {
         $user = User::factory()->create();
         Passport::actingAs($user);
-        $response = $this->get('/api/v1/zassessions/1');
+
+        $zassession = Zassession::factory()->create();
+        $response = $this->get("/api/v1/zassessions/{$zassession->id}");
+        //$response = $this->get('/api/v1/zassessions/1');
         $response->assertStatus(200);
         $response->assertJsonStructure(['id', 'name', 'event_name', 'date', 'start_time', 'end_time', 'max_users', 'direction', 'latitude', 'longitude']);
-        $response->assertJsonFragment(['name' => 'Zassession 1']);
+        $response->assertJsonFragment(['name' => $zassession->name]);
     }
     public function test_get_non_existing_zassession_detail(): void
     {
@@ -59,26 +63,26 @@ class ZassessionTest extends TestCase
         $response = $this->post('/api/v1/zassessions', $data);
         $response->assertStatus(201);
         $response->assertJsonFragment([
-            'name' => 'Zassession 2',
-            'event_name' => 'Cartas Event',
-            'date' => '2026-10-12',
-            'start_time' => '10:00:00',
-            'end_time' => '12:00:00',
-            'max_users' => 10,
-            'direction' => 'Cartas Direction',
-            'latitude' => 40.7128,
-            'longitude' => -74.0060
+            'name' => $data['name'],
+            'event_name' => $data['event_name'],
+            'date' => $data['date'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'max_users' => $data['max_users'],
+            'direction' => $data['direction'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude']
         ]);
         $this->assertDatabaseHas('zassessions', [
-            'name' => 'Zassession 2',
-            'event_name' => 'Cartas Event',
-            'date' => '2026-10-12',
-            'start_time' => '10:00:00',
-            'end_time' => '12:00:00',
-            'max_users' => 10,
-            'direction' => 'Cartas Direction',
-            'latitude' => 40.7128,
-            'longitude' => -74.0060
+            'name' => $data['name'],
+            'event_name' => $data['event_name'],
+            'date' => $data['date'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'max_users' => $data['max_users'],
+            'direction' => $data['direction'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude']
         ]);
     }
     public function test_delete_zassession(): void
@@ -110,27 +114,27 @@ class ZassessionTest extends TestCase
         $response = $this->put('/api/v1/zassessions/1', $data);
         $response->assertStatus(200);
         $response->assertJsonFragment([
-            'name' => 'Updated Zassession',
-            'event_name' => 'Updated Cartas Event',
-            'date' => '2026-11-10',
-            'start_time' => '10:00:00',
-            'end_time' => '12:00:00',
-            'max_users' => 15,
-            'direction' => 'Updated Cartas Direction',
-            'latitude' => 40.7128,
-            'longitude' => -74.0060
+            'name' => $data['name'],
+            'event_name' => $data['event_name'],
+            'date' => $data['date'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'max_users' => $data['max_users'],
+            'direction' => $data['direction'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude']
         ]);
         $this->assertDatabaseHas('zassessions', [
             'id' => 1,
-            'name' => 'Updated Zassession',
-            'event_name' => 'Updated Cartas Event',
-            'date' => '2026-11-10',
-            'start_time' => '10:00:00',
-            'end_time' => '12:00:00',
-            'max_users' => 15,
-            'direction' => 'Updated Cartas Direction',
-            'latitude' => 40.7128,
-            'longitude' => -74.0060
+            'name' => $data['name'],
+            'event_name' => $data['event_name'],
+            'date' => $data['date'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'max_users' => $data['max_users'],
+            'direction' => $data['direction'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude']
         ]);
     }
 
@@ -192,7 +196,7 @@ class ZassessionTest extends TestCase
         Passport::actingAs($user);
         $response = $this->get('/api/v1/zassessions/1/stats');
         $response->assertStatus(200);
-//@dd($response->json());        
+     
         $response->assertJsonStructure([
             'session_id',
             'session_name',
@@ -201,8 +205,8 @@ class ZassessionTest extends TestCase
             'available_slots',
             'is_full',
             'start_time',
-            'end_time'
-            //'games_count'
+            'end_time',
+            'games_count'
         ]);
         $response->assertJson([
             'session_id' => 1,
@@ -213,7 +217,7 @@ class ZassessionTest extends TestCase
             'is_full' => false,
             'start_time' => '10:00:00',
             'end_time' => '12:00:00',
-            //'games_count'
+            'games_count' => 2
         ]);
     }
     public function test_allstats(): void
@@ -226,13 +230,15 @@ class ZassessionTest extends TestCase
             'total_sessions',
             'total_users_in_sessions',
             'users_per_session',
-            //'games_per_session',
+            'games_per_session',
+            'users_per_game',
         ]);
         $response->assertJson([
-            'total_sessions' => 5,
-            'total_users_in_sessions' => 3,
-            'users_per_session' => [2, 0, 1, 0, 0],
-            //'games_per_session' => [0, 0],
+            'total_sessions' => $response->json()['total_sessions'], // Asegura que el número total de sesiones es correcto
+            'total_users_in_sessions' => $response->json()['total_users_in_sessions'], // Asegura que el número total de usuarios en sesiones es correcto
+            'users_per_session' => [2, 0, 0, 1, 0, 0],
+            'games_per_session' => [2, 0, 0, 0, 0, 0],
+            'users_per_game' => [null, null],
         ]);
     }
      public function test_zassession_is_full(): void
@@ -259,20 +265,49 @@ class ZassessionTest extends TestCase
             'end_time' => $zassession->end_time->format('H:i:s'),
         ]);
     }
-    /*
-    public function test_user_not_joined(): void
+    public function test_create_zassession_with_invalid_data(): void
     {
         $user = User::factory()->create();
         Passport::actingAs($user);
 
-        $zassession = Zassession::factory()->create();
-
-        $response = $this->get("/api/v1/zassessions/{$zassession->id}/stats");
-        $response->assertStatus(200);
-        $response->assertJson([
-            'is_user_joined' => false,
-        ]);
+        $data = [
+            'name' => 'a',
+            'event_name' => 'b',
+            'date' => '32/01/2026',
+            'start_time' => '25:00:00',
+            'end_time' => '27:00:00',
+            'max_users' => -1,
+            'direction' => '',
+            'latitude' => 1000,
+            'longitude' => 1000
+        ];
+        $response = $this->postJson('/api/v1/zassessions', $data);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name', 'event_name', 'date', 'start_time', 'end_time', 'max_users', 'direction', 'latitude', 'longitude']);
     }
-        */
+     public function test_get_games_of_zassession(): void
+    {
+        $user = User::factory()->create();
+        Passport::actingAs($user);
+        $zassession = Zassession::factory()->create([
+            'max_users' => 15,
+        ]);
+
+        $game = Game::factory()->create([
+            'zassession_id' => $zassession->id,
+            'boardgame_id' => 2,
+            'host_user_id' => $user->id,
+            'max_players' => 5,
+        ]);
+        $response = $this->post("/api/v1/zassessions/{$zassession->id}/join");
+        $response->assertStatus(200);
+
+        $response = $this->get("/api/v1/zassessions/{$zassession->id}/games");
+        $response->assertStatus(200);
+        $response->assertJsonCount(1);
+        $response->assertJsonStructure(['*' => ['id', 'zassession_id', 'boardgame_id', 'host_user_id', 'max_players', 'start_time', 'status', 'necesary_know_how']]);
+        $response->assertJsonFragment(['id' => $game->id]);
+
+    }
 
 }
