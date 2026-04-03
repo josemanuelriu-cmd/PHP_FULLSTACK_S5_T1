@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Zassession;
 use App\Models\User;
+use App\Models\Game;
 use Illuminate\Support\Facades\Auth;
 
 class ZassessionController extends Controller
@@ -169,7 +170,7 @@ class ZassessionController extends Controller
             'is_full' => $usersCount >= $maxUsers,            
             'start_time' => $zassession->start_time->format('H:i:s'),
             'end_time' => $zassession->end_time->format('H:i:s'),
-            //'games_count' => $zassession->games()->count()
+            'games_count' => $zassession->games()->count()
         ], 200);
 
     }
@@ -177,14 +178,14 @@ class ZassessionController extends Controller
     {
         $total_sessions = Zassession::count();
         $users_per_session = Zassession::withCount('users')->get()->pluck('users_count');
-        //$games_per_session = Zassession::withCount('games')->get()->pluck('games_count');
-        //$users_per_game = Game::withCount('users')->get()->pluck('users_count');
+        $games_per_session = Zassession::withCount('games')->get()->pluck('games_count');
+        $users_per_game = Game::withCount('players')->get()->pluck('users_count');
         return response()->json([
             'total_sessions' => $total_sessions,
             'total_users_in_sessions' => $users_per_session->sum(),
             'users_per_session' => $users_per_session,
-            //'games_per_session' => $games_per_session,
-            //'users_per_game' => $users_per_game
+            'games_per_session' => $games_per_session,
+            'users_per_game' => $users_per_game
         ], 200);
     }
    
