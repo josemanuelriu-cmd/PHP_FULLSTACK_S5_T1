@@ -85,32 +85,27 @@ class GameController extends Controller
         /** @var \App\Models\User $user */
         
         $user = Auth::guard('api')->user();
-//dd($game_id);        
         if (!$user) { 
             return response()->json([
                 'message' => 'User not autenticated'
             ], 404);
         } 
-//dd($game_id);        
         $game = Game::find($game_id);
         if (!$game) { 
             return response()->json([
                 'message' => 'Game not found'
             ], 404);
         }
-//dd($game_id);        
         if ($game->players()->count() >= $game->max_players) {
             return response()->json([
                 'message' => 'Game is full'
             ], 401);
         }
-//dd($game_id);        
         if ($game->players()->where('user_id', $user->id)->exists()) {
             return response()->json([
                 'message' => 'User already joined this game'
             ], 402);
         }
-//dd($game_id);        
         $game->players()->attach($user->id);
         return response()->json([
             'message' => 'User joined the game'
@@ -156,5 +151,25 @@ class GameController extends Controller
             ], 400);
         }
         return response()->json($game->players, 200);
+    }
+    public function gameStats($game_id): JsonResponse
+    {
+        $game = Game::find($game_id);
+        if (!$game) { 
+            return response()->json([
+                'message' => 'Game Not found'
+            ], 404);
+        }
+        return response()->json([
+            'game_id' => $game->id,
+            'zassession_id' => $game->zassession_id,
+            'boardgame_id' => $game->boardgame_id,
+            'host_user_id' => $game->host_user_id,
+            'max_players' => $game->max_players,
+            'total_players' => $game->players()->count(),
+            'start_time' => $game->start_time,            
+            'status' => $game->status,
+            'necesary_know_how' => $game->necesary_know_how,
+        ], 200);
     }
 }
