@@ -147,10 +147,16 @@ class UserController extends Controller
 
     public function update(Request $request, $id): JsonResponse
     {
-        $user = User::find($id);
+        $authUser = Auth::user(); // usuario logueado
+        $user = User::find($id); // usuario a editar
 
         if (!$user) {
             return response()->json(['message' => 'Not Found'], 404);
+        }
+
+        if ($authUser->type !== 'admin' && $authUser->id != $id) {
+            // Solo admin puede editar a otros, todos los demás solo a sí mismos
+            return response()->json(['message' => 'Forbidden'], 403);
         }
 
         $data = $request->validate([

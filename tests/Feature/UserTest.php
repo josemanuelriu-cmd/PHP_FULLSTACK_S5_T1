@@ -12,9 +12,7 @@ use App\Models\User;
 use Laravel\Passport\ClientRepository;
 
 class UserTest extends TestCase
-{
-
-    
+{    
     public function test_login_successful(): void
     {
         $user = User::factory()
@@ -83,14 +81,7 @@ class UserTest extends TestCase
             'name' => 'Test User'
         ]);
     }
-
-    public function test_get_users_authenticated(): void
-    {
-        $user = User::factory()->create();
-        Passport::actingAs($user);
-        $response = $this->getJson('/api/v1/users');
-        $response->assertStatus(200);
-    }    
+   
     public function test_basic_default_page()
     {
         $response = $this->get('/');
@@ -98,26 +89,71 @@ class UserTest extends TestCase
     }
     public function test_get_users_list(): void
     {
-        $user = User::factory()->create();
+        //as admin
+        $user = User::factory()->admin()->create();
         Passport::actingAs($user);
         $response = $this->get('/api/v1/users');
         $response->assertStatus(200);
-        //$response->assertJsonCount(2);
-//@dd($response->json());
         $response->assertJsonStructure(['*' => ['id', 'num_partner', 'nickname', 'name', 'type', 'registration_date', 'withdrawal_date', 'email', 'telephone', 'age', 'language', 'email_verified_at', 'created_at', 'updated_at']]);
+        //as junta
+        $user = User::factory()->junta()->create();
+        Passport::actingAs($user);
+        $response = $this->get('/api/v1/users');
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['*' => ['id', 'num_partner', 'nickname', 'name', 'type', 'registration_date', 'withdrawal_date', 'email', 'telephone', 'age', 'language', 'email_verified_at', 'created_at', 'updated_at']]);
+        //as partner
+        $user = User::factory()->partner()->create();
+        Passport::actingAs($user);
+        $response = $this->get('/api/v1/users');
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden'
+        ]);
+        //as guest
+        $user = User::factory()->guest()->create();
+        Passport::actingAs($user);
+        $response = $this->get('/api/v1/users');
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden'
+        ]);
     }
     public function test_get_user_detail(): void
     {
-        $user = User::factory()->create();
+        //as admin
+        $user = User::factory()->admin()->create();
         Passport::actingAs($user);
         $response = $this->get('/api/v1/users/1');
         $response->assertStatus(200);
         $response->assertJsonStructure(['id', 'num_partner', 'nickname', 'name', 'type', 'registration_date', 'withdrawal_date', 'email', 'telephone', 'age', 'language', 'email_verified_at', 'created_at', 'updated_at']);
         $response->assertJsonFragment(['name' => 'Test User']);
+        //as junta
+        $user = User::factory()->junta()->create();
+        Passport::actingAs($user);
+        $response = $this->get('/api/v1/users/1');
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['id', 'num_partner', 'nickname', 'name', 'type', 'registration_date', 'withdrawal_date', 'email', 'telephone', 'age', 'language', 'email_verified_at', 'created_at', 'updated_at']);
+        $response->assertJsonFragment(['name' => 'Test User']);
+        //as partner
+        $user = User::factory()->partner()->create();
+        Passport::actingAs($user);
+        $response = $this->get('/api/v1/users/1');
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden'
+        ]);
+        //as guest
+        $user = User::factory()->guest()->create();
+        Passport::actingAs($user);
+        $response = $this->get('/api/v1/users/1');
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden'
+        ]);
     }
     public function test_get_non_existing_user_detail(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         Passport::actingAs($user);
         $response = $this->get('/api/v1/users/999');
         $response->assertStatus(404);
@@ -125,9 +161,9 @@ class UserTest extends TestCase
             'message' => 'Not Found',
         ]);
     }
-    public function test_create_user(): void
+    public function test_create_user_as_admin(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         Passport::actingAs($user);
 
         $data = [
@@ -135,7 +171,7 @@ class UserTest extends TestCase
             'nickname' => 'PruebasTest',
             'name' => 'PruebasTest',
             'password' => 'password1',
-            'type' => 'junta',
+            'type' => 'admin',
             'registration_date' => now()->toDateString(),
             'email' => 'pruebas@zas.es',
             'telephone' => '123456787',
@@ -152,9 +188,9 @@ class UserTest extends TestCase
             'email' => 'pruebas@zas.es',
         ]);
     }
-    public function test_soft_delete_user(): void
+    public function test_soft_delete_user_as_admin(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         Passport::actingAs($user);
 
         $response = $this->delete('/api/v1/users/3');
@@ -167,15 +203,15 @@ class UserTest extends TestCase
             'withdrawal_date' => now()->toDateString(), // o not null
         ]);
     }
-    public function test_update_user(): void
+    public function test_update_user_as_admin(): void
     {
         // Primero creamos un usuario en BBDD
-        $user = \App\Models\User::factory()->create([
+        $user = User::factory()->admin()->create([
             'num_partner' => 2,
             'nickname' => 'PruebasTest2',
             'name' => 'PruebasTest2',
             'password' => 'password2',
-            'type' => 'junta',
+            'type' => 'admin',
             'registration_date' => now()->toDateString(),
             'email' => 'pruebas3@zas.es',
             'telephone' => '123456788',
@@ -184,12 +220,84 @@ class UserTest extends TestCase
         ]);
         $data = [
             'name' => 'PruebasTest2 actualizado',
-            'type' => 'partner',
+            'type' => 'admin',
             'registration_date' => now()->toDateString(),
             'age' => 35,
             'language' => 'en',
         ];
-        $user = User::factory()->create();
+        Passport::actingAs($user);
+        $response = $this->putJson("/api/v1/users/{$user->id}", $data);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'name' => 'PruebasTest2 actualizado',
+            'type' => 'admin',
+        ]);
+        // Verificar en BBDD
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'PruebasTest2 actualizado',
+            'type' => 'admin',
+        ]);
+    }
+    public function test_create_user_as_junta(): void
+    {
+        $user = User::factory()->junta()->create();
+        Passport::actingAs($user);
+
+        $data = [
+            'num_partner' => 4,
+            'nickname' => 'PruebasTest4',
+            'name' => 'PruebasTest4',
+            'password' => 'password4',
+            'type' => 'junta',
+            'registration_date' => now()->toDateString(),
+            'email' => 'pruebas4@zas.es',
+            'telephone' => '123456784',
+            'age' => 25,
+            'language' => 'es',
+        ];
+        $response = $this->post('/api/v1/users', $data);
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden',
+        ]);
+        $this->assertDatabaseMissing('users', [
+            'email' => 'pruebas4@zas.es',
+        ]);
+    }
+    public function test_soft_delete_user_as_junta(): void
+    {
+        $user = User::factory()->junta()->create();
+        Passport::actingAs($user);
+
+        $response = $this->delete('/api/v1/users/9');
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden',
+        ]);
+        
+    }
+    public function test_update_user_as_junta(): void
+    {
+        // Primero creamos un usuario en BBDD
+        $user = User::factory()->junta()->create([
+            'num_partner' => 2,
+            'nickname' => 'PruebasTest2',
+            'name' => 'PruebasTest2',
+            'password' => 'password2',
+            'registration_date' => now()->toDateString(),
+            'email' => 'pruebas33@zas.es',
+            'telephone' => '123456783',
+            'age' => 25,
+            'language' => 'es',
+        ]);
+        $data = [
+            'name' => 'PruebasTest2 actualizado',
+            'registration_date' => now()->toDateString(),
+            'age' => 35,
+            'language' => 'en',
+        ];
         Passport::actingAs($user);
 
         $response = $this->putJson("/api/v1/users/{$user->id}", $data);
@@ -197,13 +305,162 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'name' => 'PruebasTest2 actualizado',
-            'type' => 'partner',
+            'age' => 35,
         ]);
         // Verificar en BBDD
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'name' => 'PruebasTest2 actualizado',
-            'type' => 'partner',
+            'age' => 35,
         ]);
     }
+    public function test_create_user_as_partner(): void
+    {
+        $user = User::factory()->partner()->create();
+        Passport::actingAs($user);
+
+        $data = [
+            'num_partner' => 4,
+            'nickname' => 'PruebasTest5',
+            'name' => 'PruebasTest5',
+            'password' => 'password5',
+            'type' => 'partner',
+            'registration_date' => now()->toDateString(),
+            'email' => 'pruebas5@zas.es',
+            'telephone' => '123456785',
+            'age' => 25,
+            'language' => 'es',
+        ];
+        $response = $this->post('/api/v1/users', $data);
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden',
+        ]);
+        $this->assertDatabaseMissing('users', [
+            'email' => 'pruebas5@zas.es',
+        ]);
+    }
+    public function test_soft_delete_user_as_partner(): void
+    {
+        $user = User::factory()->partner()->create();
+        Passport::actingAs($user);
+
+        $response = $this->delete('/api/v1/users/8');
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden',
+        ]);
+        
+    }
+    public function test_update_user_as_partner(): void
+    {
+        // Primero creamos un usuario en BBDD
+        $user = User::factory()->partner()->create([
+            'num_partner' => 36,
+            'nickname' => 'PruebasTest6',
+            'name' => 'PruebasTest6',
+            'password' => 'password6',
+            'registration_date' => now()->toDateString(),
+            'email' => 'pruebas36@zas.es',
+            'telephone' => '123456786',
+            'age' => 25,
+            'language' => 'es',
+        ]);
+        $data = [
+            'name' => 'PruebasTest6 actualizado',
+            'registration_date' => now()->toDateString(),
+            'age' => 35,
+            'language' => 'en',
+        ];
+        Passport::actingAs($user);
+
+        $response = $this->putJson("/api/v1/users/{$user->id}", $data);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'name' => 'PruebasTest6 actualizado',
+            'age' => 35,
+        ]);
+        // Verificar en BBDD
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'PruebasTest6 actualizado',
+            'age' => 35,
+        ]);
+    }
+
+    public function test_create_user_as_guest(): void
+    {
+        $user = User::factory()->guest()->create();
+        Passport::actingAs($user);
+
+        $data = [
+            'num_partner' => 37,
+            'nickname' => 'PruebasTest7',
+            'name' => 'PruebasTest7',
+            'password' => 'password7',
+            'type' => 'guest',
+            'registration_date' => now()->toDateString(),
+            'email' => 'pruebas7@zas.es',
+            'telephone' => '123456787',
+            'age' => 25,
+            'language' => 'es',
+        ];
+        $response = $this->post('/api/v1/users', $data);
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden',
+        ]);
+        $this->assertDatabaseMissing('users', [
+            'email' => 'pruebas7@zas.es',
+        ]);
+    }
+    public function test_soft_delete_user_as_guest(): void
+    {
+        $user = User::factory()->guest()->create();
+        Passport::actingAs($user);
+
+        $response = $this->delete('/api/v1/users/7');
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Forbidden',
+        ]);
+        
+    }
+    public function test_update_user_as_guest(): void
+    {
+        // Primero creamos un usuario en BBDD
+        $user = User::factory()->guest()->create([
+            'num_partner' => 37,
+            'nickname' => 'PruebasTest7',
+            'name' => 'PruebasTest7',
+            'password' => 'password7',
+            'registration_date' => now()->toDateString(),
+            'email' => 'pruebas37@zas.es',
+            'telephone' => '123457777',
+            'age' => 25,
+            'language' => 'es',
+        ]);
+        $data = [
+            'name' => 'PruebasTest7 actualizado',
+            'registration_date' => now()->toDateString(),
+            'age' => 35,
+            'language' => 'en',
+        ];
+        Passport::actingAs($user);
+
+        $response = $this->putJson("/api/v1/users/{$user->id}", $data);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'name' => 'PruebasTest7 actualizado',
+            'age' => 35,
+        ]);
+        // Verificar en BBDD
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'PruebasTest7 actualizado',
+            'age' => 35,
+        ]);
+    }   
 }

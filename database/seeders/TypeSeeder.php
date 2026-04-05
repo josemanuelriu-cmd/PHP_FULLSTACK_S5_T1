@@ -16,12 +16,17 @@ class TypeSeeder extends Seeder
     {
         Type::create([
             'type' => 'abstracto',
-            'description' => 'Test Description',
+            'description' => 'Test abstracto Description',
         ]);
 
         Type::create([
             'type' => 'ameritrash',
-            'description' => 'Test Description2',
+            'description' => 'Test ameritrash Description',
+        ]);
+
+        Type::create([
+            'type' => 'dados',
+            'description' => 'Test dados Description',
         ]);
     }
 }

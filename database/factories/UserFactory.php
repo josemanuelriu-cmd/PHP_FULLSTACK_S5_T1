@@ -70,6 +70,12 @@ class UserFactory extends Factory
             'type' => 'partner',
         ]);
     }
+    public function guest(): static
+    {
+        return $this->state(fn () => [
+            'type' => 'guest',
+        ]);
+    }
 
     public function withPassword(string $password): static
     {
