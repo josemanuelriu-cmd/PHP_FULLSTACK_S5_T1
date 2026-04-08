@@ -11,6 +11,7 @@ use App\Http\Controllers\GameController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::view('/docs-scalar', 'scalar');
 
 Route::post('/v1/login', [UserController::class, 'login']);
 Route::post('/v1/register', [UserController::class, 'register']);

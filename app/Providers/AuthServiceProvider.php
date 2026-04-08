@@ -23,6 +23,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Passport::enablePasswordGrant();
+
         // Registrar rutas de Passport
         //Passport::routes();
     }

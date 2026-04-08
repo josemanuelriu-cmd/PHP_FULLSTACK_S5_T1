@@ -40,5 +40,18 @@ class UserSeeder extends Seeder
             'age' => 32,
             'language' => 'es'
         ]);
+
+        User::create([
+            'num_partner' => 3,
+            'nickname' => 'testscribe',
+            'name' => 'Test scribe',
+            'password' => bcrypt('password'),
+            'type' => 'admin',
+            'registration_date' => now(),
+            'email' => 'test@scribe.com',
+            'telephone' => '987654321',
+            'age' => 66,
+            'language' => 'es'
+        ]);
     }
 }
