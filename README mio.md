@@ -206,7 +206,7 @@ Then visit:
 
 http://localhost/public/docs/
 
-'''
+```
 ## 📮 Postman Collection
 You can test the API using Postman.
 
