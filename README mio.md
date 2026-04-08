@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/images/boardgames-banner.png" alt="Boardgames API Banner" title="Boardgames API Banner">
+  <img src="public/images/logo.png" alt="Boardgames API Banner" title="Boardgames API Banner">
 </p>
 
 <p align="center">
@@ -184,7 +184,7 @@ Run tests
 php artisan test
 
 🔑 Environment Variables
-APP_NAME=BoardGamesAPI
+APP_NAME=ApiZas
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
@@ -193,7 +193,7 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=boardgames_api
+DB_DATABASE=apizas
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -206,7 +206,7 @@ Then visit:
 
 http://localhost/public/docs/
 
-
+'''
 📮 Postman Collection
 You can test the API using Postman.
 
