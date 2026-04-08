@@ -9,28 +9,133 @@ use Illuminate\Support\Facades\Auth;
 
 class GameController extends Controller
 {
+    /**
+    * Listar todas las partidas
+    *
+    * Devuelve todas las partidas disponibles.
+    *
+    * @group Partidas
+    *
+    * @response 200 [
+    *   {
+    *     "id": 1,
+    *     "zassession_id": 1,
+    *     "boardgame_id": 1,
+    *     "host_user_id": 1,
+    *     "max_players": 10,
+    *     "start_time": "14:30:00",
+    *     "status": "en curso",
+    *     "necesary_know_how": true
+    *   }
+    * ]
+    * @response 401 {
+    *   "message": "Unauthorized"
+    * }
+    * @response 403 {
+    *   "message": "Forbidden"
+    * }
+    */    
     public function indexAll(): JsonResponse
     {
         $games = Game::all();
         return response()->json($games);
     }
-
+    /**
+    * Listar partidas de una sesión
+    *
+    * Devuelve todas las partidas disponibles de una sesión específica.
+    *
+    * @group Partidas
+    *
+    * @urlParam session_id integer required El ID de la sesión. Ejemplo: 1
+    *
+    * @response 200 [
+    *   {
+    *     "id": 1,
+    *     "zassession_id": 1,
+    *     "boardgame_id": 1,
+    *     "host_user_id": 1,
+    *     "max_players": 10,
+    *     "start_time": "14:30:00",
+    *     "status": "open",
+    *     "necesary_know_how": true
+    *   }
+    * ]
+    * @response 401 {
+    *   "message": "Unauthorized"
+    * }
+    * @response 403 {
+    *   "message": "Forbidden"
+    * }
+    */
     public function indexSession($session_id): JsonResponse
     {
         $games = Game::where('zassession_id', $session_id)->get();
         return response()->json($games);
     }
-
+    /**
+    * Obtener detalle de una partida
+    *
+    * Devuelve la información completa de una partida específica.
+    *
+    * @group Partidas
+    *
+    * @urlParam id integer required El ID de la partida. Ejemplo: 1
+    *
+    * @response 200 {
+    *   "id": 1,
+    *   "zassession_id": 1,
+    *   "boardgame_id": 1,
+    *   "host_user_id": 1,
+    *   "max_players": 10,
+    *   "start_time": "14:30:00",
+    *   "status": "en curso",
+    *   "necesary_know_how": true
+    * }    
+    * @response 401 {
+    *   "message": "Unauthorized"
+    * }
+    * @response 403 {
+    *   "message": "Forbidden"
+    * }
+    * @response 404 {
+    *   "message": "Not Found"
+    * }
+    */
     public function detail($id): JsonResponse
     {
         $games = Game::find($id);
         if ($games ===null) { 
             return response()->json([
-                'message' => 'Game Not Found'
+                'message' => 'Not Found'
             ], 404);
         }
         return response()->json($games);
     }
+    /**
+    * Crear partida
+    *
+    * Crea una nueva partida con los datos proporcionados.
+    *
+    * @group Partidas
+    *
+    * @response 201 {
+    *   "id": 1,
+    *   "zassession_id": 1,
+    *   "boardgame_id": 1,
+    *   "host_user_id": 1,
+    *   "max_players": 10,
+    *   "start_time": "14:30:00",
+    *   "status": "en curso",
+    *   "necesary_know_how": true
+    * }
+    * @response 401 {
+    *   "message": "Unauthorized"
+    * }
+    * @response 403 {
+    *   "message": "Forbidden"
+    * }
+    */
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -43,29 +148,77 @@ class GameController extends Controller
             'necesary_know_how' => 'required|boolean',
         ]);
         $games = Game::create($data);
-
         return response()->json($games, 201);
     }
+    /**
+    * Eliminar partida
+    *
+    * Elimina una partida específica.
+    *
+    * @group Partidas
+    *
+    * @urlParam id integer required El ID de la partida. Ejemplo: 1
+    *
+    * @response 200 {
+    *   "message": "Game deleted"
+    * }    
+    * @response 401 {
+    *   "message": "Unauthorized"
+    * }
+    * @response 403 {
+    *   "message": "Forbidden"
+    * }
+    * @response 404 {
+    *   "message": "Not Found"
+    * }
+    */
     public function destroy($id): JsonResponse
     {
         $games = Game::find($id);
 
         if (!$games) {
-            return response()->json(['message' => 'Game Not Found'], 404);
+            return response()->json(['message' => 'Not Found'], 404);
         }
-
         $games->delete();
-
         return response()->json([
             'message' => 'Game deleted',
         ]);
     }
+    /**
+    * Actualizar partidas
+    *
+    * Actualiza la información de una partida específica.
+    *
+    * @group Partidas
+    *
+    * @urlParam id integer required El ID de la partida. Ejemplo: 1
+    *
+    * @response 200 {
+    *   "id": 1,
+    *   "zassession_id": 1,
+    *   "boardgame_id": 1,
+    *   "host_user_id": 1,
+    *   "max_players": 10,
+    *   "start_time": "14:30:00",
+    *   "status": "en curso",
+    *   "necesary_know_how": true
+    * }
+    * @response 404 {
+    *   "message": "Not Found"
+    * }
+    * @response 401 {
+    *   "message": "Unauthorized"
+    * }
+    * @response 403 {
+    *   "message": "Forbidden"
+    * }
+    */
     public function update(Request $request, $id): JsonResponse
     {
         $games = Game::find($id);
 
         if (!$games) {
-            return response()->json(['message' => 'Game Not Found'], 404);
+            return response()->json(['message' => 'Not Found'], 404);
         }
 
         $data = $request->validate([
@@ -80,6 +233,34 @@ class GameController extends Controller
         $games->update($data);
         return response()->json($games, 200);
     }
+    /**
+    * Unirse a partida
+    *
+    * Permite a un usuario unirse a una partida específica.
+    *
+    * @group Partidas
+    *
+    * @urlParam game_id integer required El ID de la partida. Ejemplo: 1
+    *
+    * @response 200 {
+    *   "message": "User joined the game"
+    * }
+    * @response 400 {
+    *   "message": "User is not joined to this game"
+    * }
+    * @response 401 {
+    *   "message": "User not autenticated"
+    * }
+    * @response 404 {
+    *   "message": "Not Found"
+    * }
+    * @response 409 {
+    *   "message": "Game is full"
+    * }
+    * @response 409 {
+    *   "message": "User already joined this game"
+    * }
+    */
     public function join($game_id): JsonResponse
     {
         /** @var \App\Models\User $user */
@@ -88,29 +269,51 @@ class GameController extends Controller
         if (!$user) { 
             return response()->json([
                 'message' => 'User not autenticated'
-            ], 404);
+            ], 401);
         } 
         $game = Game::find($game_id);
         if (!$game) { 
             return response()->json([
-                'message' => 'Game not found'
+                'message' => 'Not Found'
             ], 404);
         }
         if ($game->players()->count() >= $game->max_players) {
             return response()->json([
                 'message' => 'Game is full'
-            ], 401);
+            ], 409);
         }
         if ($game->players()->where('user_id', $user->id)->exists()) {
             return response()->json([
                 'message' => 'User already joined this game'
-            ], 402);
+            ], 409);
         }
         $game->players()->attach($user->id);
         return response()->json([
             'message' => 'User joined the game'
         ], 200);
     }
+    /**
+    * Salir de una partida
+    *
+    * Permite a un usuario salir de una partida específica.
+    *
+    * @group Partidas
+    *
+    * @urlParam game_id integer required El ID de la partida. Ejemplo: 1
+    *
+    * @response 200 {
+    *   "message": "User left the game"
+    * }
+    * @response 401 {
+    *   "message": "User not autenticated"
+    * }
+    * @response 404 {
+    *   "message": "Not Found"
+    * }
+    * @response 409 {
+    *   "message": "User is not joined to this game"
+    * }    
+    */
     public function leave($game_id): JsonResponse
     {
         /** @var \App\Models\User $user */
@@ -118,31 +321,69 @@ class GameController extends Controller
         if ($user ===null) { 
             return response()->json([
                 'message' => 'User not autenticated'
-            ], 404);
+            ], 401);
         } 
         $game = Game::find($game_id);
         if (!$game) { 
             return response()->json([
-                'message' => 'Game not found'
+                'message' => 'Not Found'
             ], 404);
         }
         
         if (!$game->players()->where('user_id', $user->id)->exists()) {
             return response()->json([
                 'message' => 'User is not joined to this game'
-            ], 400);
+            ], 409);
         }
         $game->players()->detach($user->id);
         return response()->json([
             'message' => 'User left the game'
         ], 200);
     }
+    /**
+    * Obtener jugadores de una partida
+    *
+    * Devuelve la lista de jugadores que se han unido a una partida específica.
+    *
+    * @group Partidas
+    *
+    * @urlParam game_id integer required El ID de la partida. Ejemplo: 1
+    *
+    * @response 200 [
+    *   {
+    *     "id": 1,
+    *     "num_partner": 123,
+    *     "name": "John Doe",
+    *     "nickname": "johnny",
+    *     "email": "john.doe@Ejemplo.com"
+    *   }
+    * ]
+    * @response 400 {
+    *   "message": "No players joined to this game"
+    * }    
+    * @response 401 {
+    *   "message": "User not autenticated"
+    * }
+    * @response 403 {
+    *   "message": "Forbidden"
+    * }
+    * * @response 404 {
+    *   "message": "Not Found"
+    * }
+    */
     public function getUsers($game_id): JsonResponse
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($user ===null) { 
+            return response()->json([
+                'message' => 'User not autenticated'
+            ], 401);
+        } 
         $game = Game::find($game_id);
         if ($game ===null) { 
             return response()->json([
-                'message' => 'Game not found'
+                'message' => 'Not Found'
             ], 404);
         }
          if ($game->players()->count() == 0) {
@@ -152,12 +393,42 @@ class GameController extends Controller
         }
         return response()->json($game->players, 200);
     }
+    /**
+     * Estadísticas de una partida
+     *
+     * Devuelve las estadísticas de una partida específica.
+     *
+     * @group Partidas
+     * 
+     * @urlParam game_id integer required El ID de la partida. Ejemplo: 1
+     * 
+     * @response 200 {
+     *   "game_id": 1,
+     *   "zassession_id": 1,
+     *   "boardgame_id": 1,
+     *   "host_user_id": 1,
+     *   "max_players": 10,
+     *   "total_players": 5,
+     *   "start_time": "14:30:00",
+     *   "status": "en curso",
+     *   "necesary_know_how": true
+     * }
+     * @response 404 {
+     *   "message": "Not Found"
+     * }    
+     * @response 401 {
+     *   "message": "Unauthorized"
+     * }
+     * @response 403 {
+     *   "message": "Forbidden"
+     * }
+     */
     public function gameStats($game_id): JsonResponse
     {
         $game = Game::find($game_id);
         if (!$game) { 
             return response()->json([
-                'message' => 'Game Not found'
+                'message' => 'Not Found'
             ], 404);
         }
         return response()->json([

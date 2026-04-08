@@ -89,7 +89,7 @@ class GameTest extends TestCase
         $response = $this->get('/api/v1/games/999');
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game Not Found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_create_game_as_admin(): void
@@ -577,7 +577,7 @@ class GameTest extends TestCase
         $anotherUser = User::factory()->admin()->create();
         Passport::actingAs($anotherUser);
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(401);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Game is full',
         ]);
@@ -597,7 +597,7 @@ class GameTest extends TestCase
         $anotherUser = User::factory()->junta()->create();
         Passport::actingAs($anotherUser);
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(401);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Game is full',
         ]);
@@ -617,7 +617,7 @@ class GameTest extends TestCase
         $anotherUser = User::factory()->partner()->create();
         Passport::actingAs($anotherUser);
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(401);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Game is full',
         ]);
@@ -637,7 +637,7 @@ class GameTest extends TestCase
         $anotherUser = User::factory()->guest()->create();
         Passport::actingAs($anotherUser);
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(401);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Game is full',
         ]);
@@ -655,7 +655,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/{$game->id}/join");
         $response->assertStatus(200);        
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(402);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User already joined this game',
         ]);
@@ -673,7 +673,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/{$game->id}/join");
         $response->assertStatus(200);        
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(402);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User already joined this game',
         ]);
@@ -691,7 +691,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/{$game->id}/join");
         $response->assertStatus(200);        
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(402);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User already joined this game',
         ]);
@@ -709,7 +709,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/{$game->id}/join");
         $response->assertStatus(200);        
         $response = $this->post("/api/v1/games/{$game->id}/join");
-        $response->assertStatus(402);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User already joined this game',
         ]);
@@ -725,7 +725,7 @@ class GameTest extends TestCase
             'max_players' => 5,
         ]);
         $response = $this->delete("/api/v1/games/{$game->id}/leave");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User is not joined to this game',
         ]);
@@ -741,7 +741,7 @@ class GameTest extends TestCase
             'max_players' => 5,
         ]);
         $response = $this->delete("/api/v1/games/{$game->id}/leave");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User is not joined to this game',
         ]);
@@ -757,7 +757,7 @@ class GameTest extends TestCase
             'max_players' => 5,
         ]);
         $response = $this->delete("/api/v1/games/{$game->id}/leave");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User is not joined to this game',
         ]);
@@ -773,7 +773,7 @@ class GameTest extends TestCase
             'max_players' => 5,
         ]);
         $response = $this->delete("/api/v1/games/{$game->id}/leave");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'User is not joined to this game',
         ]);
@@ -785,7 +785,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/999/join");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_user_join_non_existing_game_as_junta(): void
@@ -795,7 +795,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/999/join");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_user_join_non_existing_game_as_partner(): void
@@ -805,7 +805,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/999/join");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_user_join_non_existing_game_as_guest(): void
@@ -815,7 +815,7 @@ class GameTest extends TestCase
         $response = $this->post("/api/v1/games/999/join");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_user_leave_non_existing_game_as_admin(): void
@@ -825,7 +825,7 @@ class GameTest extends TestCase
         $response = $this->delete("/api/v1/games/999/leave");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_user_leave_non_existing_game_as_junta(): void
@@ -835,7 +835,7 @@ class GameTest extends TestCase
         $response = $this->delete("/api/v1/games/999/leave");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_user_leave_non_existing_game_as_partner(): void
@@ -845,7 +845,7 @@ class GameTest extends TestCase
         $response = $this->delete("/api/v1/games/999/leave");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_user_leave_non_existing_game_as_guest(): void
@@ -855,7 +855,7 @@ class GameTest extends TestCase
         $response = $this->delete("/api/v1/games/999/leave");
         $response->assertStatus(404);
         $response->assertJson([
-            'message' => 'Game not found',
+            'message' => 'Not Found',
         ]);
     }
     public function test_get_game_players_as_admin(): void

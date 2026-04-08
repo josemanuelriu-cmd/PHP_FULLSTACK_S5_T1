@@ -750,7 +750,7 @@ class ZassessionTest extends TestCase
             'max_users' => 0,
         ]);
         $response = $this->post("/api/v1/zassessions/{$zassession->id}/join");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Session is full',
         ]);
@@ -764,7 +764,7 @@ class ZassessionTest extends TestCase
             'max_users' => 0,
         ]);
         $response = $this->post("/api/v1/zassessions/{$zassession->id}/join");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Session is full',
         ]);
@@ -778,7 +778,7 @@ class ZassessionTest extends TestCase
             'max_users' => 0,
         ]);
         $response = $this->post("/api/v1/zassessions/{$zassession->id}/join");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Session is full',
         ]);
@@ -792,7 +792,7 @@ class ZassessionTest extends TestCase
             'max_users' => 0,
         ]);
         $response = $this->post("/api/v1/zassessions/{$zassession->id}/join");
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
             'message' => 'Session is full',
         ]);
