@@ -220,8 +220,8 @@ http://localhost:8000/api/v1
 4. Use the Bearer token for protected routes
 
 ## 🚧 Upcoming Improvements
--Pagination for listings
--Advanced filters (players, type, difficulty)
--Improved stats system
--Notifications for sessions
--Image uploads for board games
+- Pagination for listings
+- Advanced filters (players, type, difficulty)
+- Improved stats system
+- Notifications for sessions
+- Image uploads for board games
