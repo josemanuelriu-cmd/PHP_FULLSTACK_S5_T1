@@ -204,7 +204,7 @@ php artisan scribe:generate
 
 Then visit:
 
-http://localhost/public/docs/
+http://localhost/docs/
 
 ```
 ## 📮 Postman Collection
