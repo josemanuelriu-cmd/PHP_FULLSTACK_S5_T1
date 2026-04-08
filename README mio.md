@@ -142,9 +142,9 @@ All endpoints are prefixed with:
 The API implements **role-based access control**:
 
 - **admin** → Full access
-- **junta** → Management permissions
-- **partner** → Limited read + stats
-- **guest** → Basic participation
+- **junta** → Full access except edit other users
+- **partner** → Limited read + create games + stats
+- **guest** → Join/leave sessions and games
 
 ---
 
