@@ -183,7 +183,7 @@ http://localhost:8000/api/v1/
 Run tests
 php artisan test
 
-🔑 Environment Variables
+## 🔑 Environment Variables
 APP_NAME=ApiZas
 APP_ENV=local
 APP_KEY=
@@ -197,7 +197,7 @@ DB_DATABASE=apizas
 DB_USERNAME=root
 DB_PASSWORD=
 
-📖 API Documentation
+## 📖 API Documentation
 Generate documentation (if using Scribe):
 
 php artisan scribe:generate
@@ -207,7 +207,7 @@ Then visit:
 http://localhost/public/docs/
 
 '''
-📮 Postman Collection
+## 📮 Postman Collection
 You can test the API using Postman.
 
 Steps:
@@ -218,3 +218,10 @@ http://localhost:8000/api/v1
  POST /login
  POST /register
 4. Use the Bearer token for protected routes
+
+## 🚧 Upcoming Improvements
+Pagination for listings
+Advanced filters (players, type, difficulty)
+Improved stats system
+Notifications for sessions
+Image uploads for board games
