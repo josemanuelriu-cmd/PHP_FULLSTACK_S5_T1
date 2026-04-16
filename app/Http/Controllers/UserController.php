@@ -482,7 +482,7 @@ class UserController extends Controller
             'nickname' => 'sometimes|string',
             'name' => 'sometimes|string',
             'password' => 'sometimes|string|min:6',
-            'type' => 'sometimes|in:admin,partner,guest',
+            'type' => 'sometimes|in:admin,junta,partner,guest',
             'registration_date' => 'sometimes|date',
             'withdrawal_date' => 'nullable|date',
             'email' => 'nullable|email',
