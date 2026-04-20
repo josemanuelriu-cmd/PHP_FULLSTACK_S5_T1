@@ -161,7 +161,7 @@ class UserController extends Controller
     public function register(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'num_partner' => 'required|integer',
+            'num_partner' => 'nullable|integer',
             'nickname' => 'required|string',    
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -172,6 +172,11 @@ class UserController extends Controller
             'age' => 'required|integer',
             'language' => 'required|in:en,es,ca',
         ]);
+        // Habilito para que si introducen num_partner null, se asigne automáticamente el siguiente número disponible
+        if (!isset($data['num_partner'])) {
+            $max = User::max('num_partner');
+            $data['num_partner'] = $max ? $max + 1 : 1;
+        }
 
         $user = User::create([
             'num_partner' => $data['num_partner'],
@@ -269,7 +274,7 @@ class UserController extends Controller
      *
      * @group Usuarios
      * 
-     * @bodyParam num_partner integer required El número de socio del usuario. Ejemplo: 123
+     * @bodyParam num_partner integer nullable El número de socio del usuario. Ejemplo: 123
      * @bodyParam nickname string required El apodo del usuario. Ejemplo: john_doe
      * @bodyParam name string required El nombre completo del usuario. Ejemplo: John Doe
      * @bodyParam password string required La contraseña del usuario. Ejemplo: secret123
