@@ -336,7 +336,7 @@ class UserController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'num_partner' => 'required|integer',
+            'num_partner' => 'nullable|integer',
             'nickname' => 'required|string',
             'name' => 'required|string',
             'password' => 'required|string|min:6',
@@ -347,6 +347,11 @@ class UserController extends Controller
             'age' => 'required|integer',
             'language' => 'required|in:en,es,ca',
         ]);
+        // Habilito para que si introducen num_partner null, se asigne automáticamente el siguiente número disponible
+        if (!isset($data['num_partner'])) {
+            $max = User::max('num_partner');
+            $data['num_partner'] = $max ? $max + 1 : 1;
+        }
         $data['password'] = bcrypt($data['password']);
         $user = User::create($data);
 
