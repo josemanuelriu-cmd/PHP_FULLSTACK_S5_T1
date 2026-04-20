@@ -53,7 +53,7 @@ class UserTest extends TestCase
     public function test_register_successful(): void
     {
         $payload = [
-            'num_partner' => 3,
+            'num_partner' => null,
             'nickname' => 'PruebasTest',
             'name' => 'Test User',
             'email' => 'testuser@example.com',
