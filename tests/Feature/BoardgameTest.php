@@ -104,7 +104,7 @@ class BoardgameTest extends TestCase
             'min_age' => 10,
             'duration' => 100,
             'description' => 'descripcion prueba',
-            'owner_user_id' => 1,
+            'owner_user_id' => null,
         ];
         $response = $this->post('/api/v1/boardgames', $data);
         $response->assertStatus(201);

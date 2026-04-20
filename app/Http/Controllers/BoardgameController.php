@@ -91,7 +91,8 @@ class BoardgameController extends Controller
      *   "max_players": 10,
      *   "min_age": 8,
      *   "duration": 60,
-     *   "description": "Descripción del juego A"
+     *   "description": "Descripción del juego A",
+     *   "owner_user_id": null
      * }
      * @response 400 {
      *   "message": "The given data was invalid."
@@ -113,7 +114,7 @@ class BoardgameController extends Controller
             'min_age' => 'required|integer', 
             'duration' => 'required|integer', 
             'description' => 'required|string',
-            'owner_user_id' => 'integer'
+            'owner_user_id' => 'nullable|integer'
         ]);
         $boardgames = Boardgame::create($data);
 
