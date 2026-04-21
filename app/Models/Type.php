@@ -37,4 +37,14 @@ class Type extends Model
             'description' => 'string',
         ];
     }
+
+    public function boardgames()
+    {
+        return $this->belongsToMany(
+            Boardgame::class, 
+            'boardgame_type', 
+            'type_id',
+            'boardgame_id'
+        )->withTimestamps();
+    }
 }
