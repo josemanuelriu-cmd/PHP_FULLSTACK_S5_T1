@@ -64,5 +64,17 @@ class Boardgame extends Model
             $boardgame->slug = Str::slug($boardgame->name);
         });
     }
-
+    public function types()
+    {
+        return $this->belongsToMany(
+            Type::class, 
+            'boardgame_type', 
+            'boardgame_id', 
+            'type_id'
+        )->withTimestamps();
+    }
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_user_id');
+    }
 }

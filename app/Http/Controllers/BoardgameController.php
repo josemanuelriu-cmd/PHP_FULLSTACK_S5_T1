@@ -37,7 +37,8 @@ class BoardgameController extends Controller
      */
     public function index(): JsonResponse
     {
-        $boardgames = Boardgame::all();
+        //$boardgames = Boardgame::all();
+        $boardgames = Boardgame::with(['types', 'owner'])->get();
         return response()->json($boardgames);
     }
     /**
@@ -68,13 +69,14 @@ class BoardgameController extends Controller
      */
     public function detail($id): JsonResponse
     {
-        $boardgames = Boardgame::find($id);
-        if ($boardgames ===null) { 
+        //$boardgames = Boardgame::find($id);
+        $boardgame = Boardgame::with(['types', 'owner'])->find($id);
+        if ($boardgame ===null) { 
             return response()->json([
                 'message' => 'Not Found'
             ], 404);
         }
-        return response()->json($boardgames);
+        return response()->json($boardgame);
     }
     /**
      * Crear juego de mesa
@@ -114,11 +116,14 @@ class BoardgameController extends Controller
             'min_age' => 'required|integer', 
             'duration' => 'required|integer', 
             'description' => 'required|string',
-            'owner_user_id' => 'nullable|integer'
+            'owner_user_id' => 'nullable|integer|exists:users,id',
+            'types'         => 'nullable|array',
+            'types.*'       => 'integer|exists:types,id'
         ]);
         $boardgames = Boardgame::create($data);
+        $boardgames->types()->sync($request->input('types', []));
 
-        return response()->json($boardgames, 201);
+        return response()->json($boardgames->load('types', 'owner'), 201);
     }
     /**
      * Eliminar juego de mesa
@@ -202,9 +207,12 @@ class BoardgameController extends Controller
             'min_age' => 'sometimes|integer', 
             'duration' => 'sometimes|integer', 
             'description' => 'sometimes|string',
-            'owner_user_id' => 'sometimes|integer'
+            'owner_user_id' => 'sometimes|nullable|integer|exists:users,id',
+            'types'         => 'nullable|array',
+            'types.*'       => 'integer|exists:types,id'
         ]);
         $boardgames->update($data);
-        return response()->json($boardgames, 200);
+        $boardgames->types()->sync($request->input('types', []));
+        return response()->json($boardgames->load('types', 'owner'), 200);
     }    
 }
