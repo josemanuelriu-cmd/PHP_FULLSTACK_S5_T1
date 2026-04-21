@@ -192,6 +192,8 @@ DB_PASSWORD=
 
 php artisan key:generate
 
+php artisan passport:keys
+
 php artisan passport:client --personal
 
 Run migrations
