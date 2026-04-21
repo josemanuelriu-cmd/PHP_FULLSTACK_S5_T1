@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             'nickname' => 'testuser2',
             'name' => 'Test User2',
             'password' => bcrypt('password2'),
-            'type' => 'admin',
+            'type' => 'junta',
             'registration_date' => now(),
             'email' => 'test2@example.com',
             'telephone' => '123456789',
@@ -43,13 +43,26 @@ class UserSeeder extends Seeder
 
         User::create([
             'num_partner' => 3,
-            'nickname' => 'testscribe',
-            'name' => 'Test scribe',
-            'password' => bcrypt('password'),
-            'type' => 'admin',
+            'nickname' => 'testuser3',
+            'name' => 'Test User3',
+            'password' => bcrypt('password3'),
+            'type' => 'partner',
             'registration_date' => now(),
-            'email' => 'test@scribe.com',
+            'email' => 'test3@example.com',
             'telephone' => '987654321',
+            'age' => 66,
+            'language' => 'es'
+        ]);
+
+        User::create([
+            'num_partner' => 4,
+            'nickname' => 'testuser4',
+            'name' => 'Test User4',
+            'password' => bcrypt('password4'),
+            'type' => 'guest',
+            'registration_date' => now(),
+            'email' => 'test4@example.com',
+            'telephone' => '987654344',
             'age' => 66,
             'language' => 'es'
         ]);

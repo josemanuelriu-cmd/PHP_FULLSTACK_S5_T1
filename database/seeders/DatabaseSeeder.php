@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             ZassessionSeeder::class,
             GameSeeder::class,
             User_zassessionSeeder::class,
-            Game_userSeeder::class
+            Game_userSeeder::class,
+            boardgame_typeSeeder::class,
         ]);
     }
 }
