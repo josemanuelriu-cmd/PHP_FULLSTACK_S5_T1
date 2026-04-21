@@ -175,19 +175,6 @@ composer install
 
 Configure environment
 cp .env.example .env
-php artisan key:generate
-
-Run migrations
-php artisan migrate
-Start server
-php artisan serve
-
-API available at:
-
-http://localhost:8000/api/v1/
-
-Run tests
-php artisan test
 
 ## 🔑 Environment Variables
 APP_NAME=ApiZas
@@ -202,6 +189,24 @@ DB_PORT=3306
 DB_DATABASE=apizas
 DB_USERNAME=root
 DB_PASSWORD=
+
+php artisan key:generate
+
+php artisan passport:client --personal
+
+Run migrations
+php artisan migrate
+Start server
+php artisan serve
+
+API available at:
+
+http://localhost:8000/api/v1/
+
+Run tests
+php artisan test
+
+
 
 ## 📖 API Documentation
 Generate documentation (if using Scribe):
