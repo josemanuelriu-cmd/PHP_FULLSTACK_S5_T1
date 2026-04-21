@@ -163,6 +163,12 @@ The API implements **role-based access control**:
 ```bash
 git clone https://github.com/tu-usuario/boardgames-api.git
 cd boardgames-api
+si estas utilizando XAMPP, habilita las extensiones sodium.
+Ves al archivo
+c:\XAMPP\php\php.ini
+busca la linea
+;extension=sodium
+quita el punto y coma de delante. Guarda y reinicia XAMPP
 
 Install dependencies
 composer install
